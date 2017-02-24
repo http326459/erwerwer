@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>调研页面</title>
+    <link href="css/style.css" rel="stylesheet">
+    <script src="js/jquery-1.8.3.min.js"></script>
+</head>
+<body>
+	<div class="index">
+		<div class="top"><img src="images/tyym_01.png"/></div>
+		<div class="mid"><img src="images/lls.jpg"/>
+			<div class="bmk" id="lineDiv">
+				<div id="back"><img src="images/kkz.png" ></div>
+				<div class="inmid" id="minDiv"><img src="images/hd.png"></div>
+				<div id="msg" style="display:none;"></div>
+				<div id="vals" style="display:none;"></div>
+			</div>
+		</div>
+		<div class="bot"><img src="images/tyym_03.jpg"/>
+			<a class="inbot" href="javascipt:;"><img src="images/tj.png"/></a>
+		</div>
+	</div>
+</body>
+<script>
+            window.onload = function() {
+                var lineDiv = document.getElementById('lineDiv'); //长线条
+                var minDiv = document.getElementById('minDiv'); //小方块
+                var msg = document.getElementById("msg");
+                var vals = document.getElementById("vals");
+                var ifBool = false; //判断鼠标是否按下
+                //事件
+                var start = function(e) {
+                    e.stopPropagation();
+                    ifBool = true;
+                   // console.log("鼠标按下")
+                }
+                var move = function(e) {
+                   // console.log("鼠标拖动")
+                    if(ifBool) {
+                        if(!e.touches) {    //兼容移动端
+                            var x = e.clientX;
+                        } else {     //兼容PC端
+                            var x = e.touches[0].pageX;
+                        }
+                        //var x = e.touches[0].pageX || e.clientX; //鼠标横坐标var x
+                        var lineDiv_left = getPosition(lineDiv).left; //长线条的横坐标
+                        var minDiv_left = x - lineDiv_left; //小方块相对于父元素（长线条）的left值 
+                        if(minDiv_left >= lineDiv.offsetWidth - 15) {
+                            minDiv_left = lineDiv.offsetWidth - 15;
+                        }
+                        if(minDiv_left < 0) {
+                            minDiv_left = 0;
+                        }
+                        //设置拖动后小方块的left值
+                        //minDiv.style.left = minDiv_left + "px";
+                        msg.innerText = parseInt((minDiv_left / (lineDiv.offsetWidth - 15)) * 100);
+                        vals.innerText = parseInt((minDiv_left / (lineDiv.offsetWidth - 15)) * 100);
+                        console.log(msg.innerText);
+                       
+                        if(msg.innerText > 90){
+                        	 minDiv.style.left = 90 + '%';
+                        }else{
+                        	minDiv.style.left = msg.innerText + '%';
+                        }
+                    }
+                }
+                var end = function(e) {
+                      //  console.log("鼠标弹起")
+                        ifBool = false;
+                    }
+                    //鼠标按下方块
+                minDiv.addEventListener("touchstart", start);
+                minDiv.addEventListener("mousedown", start);
+                //拖动
+                window.addEventListener("touchmove", move);
+                window.addEventListener("mousemove", move);
+                //鼠标松开
+                window.addEventListener("touchend", end);
+                window.addEventListener("mouseup", end);
+                //获取元素的绝对位置
+                function getPosition(node) {
+                    var left = node.offsetLeft; //获取元素相对于其父元素的left值var left
+                    var top = node.offsetTop;
+                    current = node.offsetParent; // 取得元素的offsetParent
+                    　 // 一直循环直到根元素
+                    　　
+                    while(current != null) {　　
+                        left += current.offsetLeft;　　
+                        top += current.offsetTop;　　
+                        current = current.offsetParent;　　
+                    }
+                    return {
+                        "left": left,
+                        "top": top
+                    };
+                }
+            }
+        </script>
+</html>
